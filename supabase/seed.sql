@@ -1,0 +1,3 @@
+-- Optional local seed data (not run in production by default)
+-- Use after creating a test user via Supabase Auth to link a profile manually,
+-- or rely on the onboarding Edge Function (Slice 0.6).

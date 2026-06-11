@@ -1,0 +1,37 @@
+{
+  "complaints": [
+    { "id": "wait_time", "label": "Long wait time" },
+    { "id": "staff_attitude", "label": "Staff attitude" },
+    { "id": "service_quality", "label": "Service quality" },
+    { "id": "cleanliness", "label": "Cleanliness" },
+    { "id": "pricing", "label": "Pricing" },
+    { "id": "billing", "label": "Billing issues" },
+    { "id": "appointment_scheduling", "label": "Appointment scheduling" },
+    { "id": "communication", "label": "Poor communication" },
+    { "id": "follow_up", "label": "Lack of follow-up" },
+    { "id": "product_quality", "label": "Product quality" },
+    { "id": "food_quality", "label": "Food quality" },
+    { "id": "ambiance", "label": "Ambiance / environment" },
+    { "id": "parking", "label": "Parking" },
+    { "id": "accessibility", "label": "Accessibility" },
+    { "id": "pain_discomfort", "label": "Pain or discomfort" },
+    { "id": "technical_issues", "label": "Technical issues" },
+    { "id": "rescheduling", "label": "Rescheduling problems" },
+    { "id": "unmet_expectations", "label": "Unmet expectations" },
+    { "id": "rushed_service", "label": "Rushed service" },
+    { "id": "other", "label": "Other" }
+  ],
+  "praise": [
+    { "id": "friendly_staff", "label": "Friendly staff" },
+    { "id": "fast_service", "label": "Fast service" },
+    { "id": "cleanliness", "label": "Cleanliness" },
+    { "id": "value_for_money", "label": "Value for money" },
+    { "id": "quality_of_work", "label": "Quality of work" },
+    { "id": "communication", "label": "Great communication" },
+    { "id": "atmosphere", "label": "Atmosphere" },
+    { "id": "convenience", "label": "Convenience" },
+    { "id": "professionalism", "label": "Professionalism" },
+    { "id": "would_recommend", "label": "Would recommend" },
+    { "id": "other", "label": "Other" }
+  ]
+}
