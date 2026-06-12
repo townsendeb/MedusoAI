@@ -11,6 +11,8 @@ Track every credential needed to run Meduso locally and in production. Copy valu
 
 | Credential              | Where to get it                                                     | Local (`apps/web/.env.local`)   | Vercel | Supabase Edge secrets       |
 | ----------------------- | ------------------------------------------------------------------- | ------------------------------- | ------ | --------------------------- |
+| Marketing site URL      | Your domain registrar / DNS                                         | `NEXT_PUBLIC_MARKETING_URL`     | Yes    | —                           |
+| App URL                 | Vercel → Domains (`app.medusoai.com`)                               | `NEXT_PUBLIC_APP_URL`           | Yes    | —                           |
 | Supabase URL            | [Supabase](https://supabase.com/dashboard) → Project Settings → API | `NEXT_PUBLIC_SUPABASE_URL`      | Yes    | `SUPABASE_URL` (auto)       |
 | Supabase anon key       | Same                                                                | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes    | —                           |
 | Supabase service role   | Same (**server only**)                                              | `SUPABASE_SERVICE_ROLE_KEY`     | Yes    | `SUPABASE_SERVICE_ROLE_KEY` |

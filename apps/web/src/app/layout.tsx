@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "Meduso AI",
   description:
     "Identify unhappy customers before they leave negative reviews or stop returning.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
