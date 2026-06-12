@@ -14,43 +14,52 @@ export function PricingCard({ tier }: PricingCardProps) {
   return (
     <div
       className={cn(
-        "relative flex flex-col p-6",
+        "relative flex flex-col p-7 md:p-8",
         tier.highlighted ? marketing.cardHighlight : marketing.card,
       )}
     >
       {tier.badge ? (
-        <MarketingBadge className="absolute -top-3 left-1/2 -translate-x-1/2">
+        <MarketingBadge className="absolute -top-3.5 left-1/2 -translate-x-1/2">
           {tier.badge}
         </MarketingBadge>
       ) : null}
 
-      <p className="text-sm font-medium text-[var(--marketing-muted-foreground)]">{tier.name}</p>
-      <div className="mt-2 flex items-baseline gap-1">
-        <span className="text-4xl font-semibold tracking-tight">{tier.price}</span>
+      <p className="font-display text-sm font-bold text-[var(--marketing-muted-foreground)]">{tier.name}</p>
+      <div className="mt-3 flex items-baseline gap-1.5">
+        <span
+          className={cn(
+            "font-display text-5xl font-extrabold tracking-tight",
+            tier.highlighted && "text-[var(--marketing-brand)]",
+          )}
+        >
+          {tier.price}
+        </span>
         {tier.priceNote ? (
-          <span className="text-sm text-[var(--marketing-muted-foreground)]">{tier.priceNote}</span>
+          <span className="text-sm font-medium text-[var(--marketing-muted-foreground)]">
+            {tier.priceNote}
+          </span>
         ) : null}
       </div>
 
-      <ul className="mt-6 flex flex-1 flex-col gap-2.5 text-sm text-[var(--marketing-muted-foreground)]">
-        <li className="flex justify-between gap-2 border-b border-[var(--marketing-border)] pb-2">
+      <ul className="mt-8 flex flex-1 flex-col gap-3 text-sm font-medium text-[var(--marketing-muted-foreground)]">
+        <li className="flex justify-between gap-2 rounded-xl bg-[var(--marketing-muted)] px-3 py-2.5">
           <span>SMS</span>
-          <span className="font-medium text-[var(--marketing-foreground)]">{limits.sms}</span>
+          <span className="text-[var(--marketing-foreground)]">{limits.sms}</span>
         </li>
-        <li className="flex justify-between gap-2 border-b border-[var(--marketing-border)] pb-2">
+        <li className="flex justify-between gap-2 rounded-xl bg-[var(--marketing-muted)] px-3 py-2.5">
           <span>Voice</span>
-          <span className="font-medium text-[var(--marketing-foreground)]">{limits.voice}</span>
+          <span className="text-[var(--marketing-foreground)]">{limits.voice}</span>
         </li>
-        <li className="flex justify-between gap-2">
+        <li className="flex justify-between gap-2 rounded-xl bg-[var(--marketing-muted)] px-3 py-2.5">
           <span>Imports</span>
-          <span className="font-medium text-[var(--marketing-foreground)]">{limits.imports}</span>
+          <span className="text-[var(--marketing-foreground)]">{limits.imports}</span>
         </li>
       </ul>
 
       <MarketingButton
         href={tier.ctaHref}
         variant={tier.highlighted ? "primary" : "secondary"}
-        className="mt-6 w-full"
+        className="mt-8 w-full"
         external={tier.isMailto}
       >
         {tier.cta}

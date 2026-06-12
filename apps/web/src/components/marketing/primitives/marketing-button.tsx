@@ -3,25 +3,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const marketingButtonVariants = cva(
-  "inline-flex items-center justify-center rounded-xl text-sm font-semibold transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--marketing-brand)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center rounded-full text-sm font-bold transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[var(--marketing-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        primary:
-          "bg-[var(--marketing-brand)] text-[var(--marketing-brand-foreground)] hover:opacity-90 shadow-sm",
+        primary: "marketing-btn-primary",
         secondary:
-          "border border-[var(--marketing-border)] bg-[var(--marketing-card)] text-[var(--marketing-foreground)] hover:bg-[var(--marketing-muted)]",
+          "border-2 border-[var(--marketing-secondary)] bg-transparent text-[var(--marketing-secondary)] hover:bg-[var(--marketing-secondary)] hover:text-black",
         ghost:
-          "text-[var(--marketing-foreground)] hover:bg-[var(--marketing-muted)]",
+          "text-[var(--marketing-muted-foreground)] hover:bg-[var(--marketing-card)] hover:text-[var(--marketing-secondary)]",
         inverse:
-          "bg-[var(--marketing-brand-foreground)] text-[var(--marketing-brand)] hover:opacity-90 shadow-sm",
+          "bg-[var(--marketing-secondary)] text-black hover:bg-[var(--marketing-secondary)]/90",
         outlineInverse:
-          "border border-[var(--marketing-brand-foreground)]/30 text-[var(--marketing-brand-foreground)] hover:bg-[var(--marketing-brand-foreground)]/10",
+          "border-2 border-[var(--marketing-secondary)] text-[var(--marketing-secondary)] hover:bg-[var(--marketing-secondary)] hover:text-black",
       },
       size: {
-        default: "h-11 px-5",
-        sm: "h-9 px-4 text-sm",
-        lg: "h-12 px-6 text-base",
+        default: "h-12 px-7",
+        sm: "h-10 px-5 text-sm",
+        lg: "h-14 px-9 text-base",
       },
     },
     defaultVariants: {

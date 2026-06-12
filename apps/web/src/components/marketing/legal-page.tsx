@@ -14,13 +14,15 @@ export function LegalPage({ title, children }: LegalPageProps) {
   return (
     <div className={marketing.page}>
       <MarketingNav />
-      <main className="py-16 md:py-24">
+      <main className="pt-28 pb-16 md:pt-36 md:pb-24">
         <MarketingContainer narrow>
-          <div className="mb-8 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <div className="mb-8 rounded-2xl border border-[var(--marketing-brand)]/40 bg-[var(--marketing-brand-muted)] px-4 py-3 text-sm font-medium text-[var(--marketing-brand)]">
             Template — have legal counsel review before commercial launch.
           </div>
           <h1 className={marketing.h2}>{title}</h1>
-          <div className={cn(marketing.body, "prose-marketing mt-8 space-y-6")}>{children}</div>
+          <div className={cn(marketing.body, "mt-8 space-y-6 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-[var(--marketing-foreground)]")}>
+            {children}
+          </div>
           <p className={cn(marketing.bodySm, "mt-12")}>
             <Link href="/" className={marketing.link}>
               ← Back to home

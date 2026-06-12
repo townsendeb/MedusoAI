@@ -2,13 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, Sparkles, X } from "lucide-react";
 import { appUrl, BRAND_NAME, NAV_LINKS } from "@/lib/marketing/config";
-import {
-  MarketingButton,
-  MarketingContainer,
-  marketing,
-} from "@/components/marketing/primitives";
+import { MarketingButton, marketing } from "@/components/marketing/primitives";
 import { cn } from "@/lib/utils";
 
 export function MarketingNav() {
@@ -16,17 +12,23 @@ export function MarketingNav() {
 
   return (
     <header className={marketing.nav}>
-      <MarketingContainer className="flex h-16 items-center justify-between gap-4">
-        <Link href="/" className="text-xl font-semibold tracking-tight text-[var(--marketing-foreground)]">
+      <div className={marketing.navInner}>
+        <Link
+          href="/"
+          className="font-display flex items-center gap-2.5 text-lg font-bold tracking-tight text-[var(--marketing-secondary)]"
+        >
+          <span className="flex size-9 items-center justify-center rounded-2xl marketing-btn-primary">
+            <Sparkles className="size-4" aria-hidden />
+          </span>
           {BRAND_NAME}
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-[var(--marketing-muted-foreground)] transition-colors hover:text-[var(--marketing-foreground)]"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--marketing-muted-foreground)] transition-colors hover:bg-[var(--marketing-muted)] hover:text-[var(--marketing-secondary)]"
             >
               {link.label}
             </a>
@@ -48,7 +50,7 @@ export function MarketingNav() {
           </MarketingButton>
           <button
             type="button"
-            className="inline-flex size-9 items-center justify-center rounded-lg text-[var(--marketing-foreground)] hover:bg-[var(--marketing-muted)]"
+            className="inline-flex size-10 items-center justify-center rounded-full border border-[var(--marketing-border)] text-[var(--marketing-secondary)]"
             aria-expanded={open}
             aria-label={open ? "Close menu" : "Open menu"}
             onClick={() => setOpen((value) => !value)}
@@ -56,29 +58,29 @@ export function MarketingNav() {
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
         </div>
-      </MarketingContainer>
+      </div>
 
       <div
         className={cn(
-          "border-t border-[var(--marketing-border)] bg-[var(--marketing-surface)] md:hidden",
+          "pointer-events-auto fixed inset-x-4 top-[5.25rem] z-50 rounded-[1.75rem] border border-[var(--marketing-border)] bg-[var(--marketing-card)] p-5 md:hidden",
           open ? "block" : "hidden",
         )}
       >
-        <MarketingContainer className="flex flex-col gap-1 py-4">
+        <div className="flex flex-col gap-1">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="rounded-lg px-2 py-2.5 text-sm font-medium text-[var(--marketing-foreground)] hover:bg-[var(--marketing-muted)]"
+              className="rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--marketing-secondary)] hover:bg-[var(--marketing-muted)]"
               onClick={() => setOpen(false)}
             >
               {link.label}
             </a>
           ))}
-          <MarketingButton href={appUrl("/login")} variant="secondary" className="mt-2 w-full">
+          <MarketingButton href={appUrl("/login")} variant="secondary" className="mt-3 w-full">
             Sign in
           </MarketingButton>
-        </MarketingContainer>
+        </div>
       </div>
     </header>
   );

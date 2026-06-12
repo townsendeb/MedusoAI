@@ -9,7 +9,7 @@ export const CONTACT_EMAIL = "support@medusoai.com";
 
 export const BRAND_NAME = "Meduso";
 
-export const TAGLINE = "We're killing your email surveys. Get real feedback from your customers.";
+export const TAGLINE = "We're killing email surveys. Get real feedback from your customers.";
 
 export const HERO_SUBHEAD =
   "Meduso texts your customers after their visit, understands their replies with AI, and alerts your team when someone needs a human follow-up.";
