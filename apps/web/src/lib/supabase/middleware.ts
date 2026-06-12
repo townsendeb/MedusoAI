@@ -5,13 +5,25 @@ import {
   isAppHost,
   isMarketingHost,
   isMarketingRoute,
+  isVercelHost,
 } from "@/lib/marketing/hosts";
 
 const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
 const PUBLIC_PREFIXES = ["/api/inngest", "/auth/signout", "/auth/callback"];
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.medusoai.com";
-const MARKETING_URL = process.env.NEXT_PUBLIC_MARKETING_URL ?? "https://medusoai.com";
+function resolveBaseUrl(envValue: string | undefined, fallback: string): string {
+  const trimmed = envValue?.trim();
+  if (trimmed && /^https?:\/\//i.test(trimmed)) {
+    return trimmed.replace(/\/$/, "");
+  }
+  return fallback;
+}
+
+const APP_URL = resolveBaseUrl(process.env.NEXT_PUBLIC_APP_URL, "https://app.medusoai.com");
+const MARKETING_URL = resolveBaseUrl(
+  process.env.NEXT_PUBLIC_MARKETING_URL,
+  "https://medusoai.com",
+);
 
 function isAuthRoute(pathname: string) {
   return AUTH_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
@@ -44,9 +56,19 @@ function redirectToMarketing(request: NextRequest, pathname: string) {
   return NextResponse.redirect(url);
 }
 
-/** Marketing site = root domain or localhost, not the app subdomain. */
+function hasSupabaseConfig(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim(),
+  );
+}
+
+/** Marketing site = root domain, Vercel preview URL, or localhost — not the app subdomain. */
 function isMarketingSite(hostname: string): boolean {
-  return !isAppHost(hostname) && (hostname === "localhost" || isMarketingHost(hostname));
+  return (
+    !isAppHost(hostname) &&
+    (hostname === "localhost" || isMarketingHost(hostname) || isVercelHost(hostname))
+  );
 }
 
 export async function updateSession(request: NextRequest) {
@@ -68,14 +90,16 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
-  // Localhost + production app subdomain: marketing pages are public even when logged in.
+  // Marketing pages are public on any host except the app subdomain.
   if (isMarketingRoute(pathname)) {
     if (onAppSubdomain) {
       return redirectToMarketing(request, pathname);
     }
-    if (onMarketingSite) {
-      return supabaseResponse;
-    }
+    return supabaseResponse;
+  }
+
+  if (!hasSupabaseConfig()) {
+    return supabaseResponse;
   }
 
   const supabase = createServerClient(

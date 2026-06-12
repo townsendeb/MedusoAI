@@ -12,6 +12,11 @@ export function isAppHost(hostname: string): boolean {
   return (APP_HOSTS as readonly string[]).includes(hostname);
 }
 
+/** Vercel preview/production URLs before custom domain is attached */
+export function isVercelHost(hostname: string): boolean {
+  return hostname.endsWith(".vercel.app");
+}
+
 export function isMarketingRoute(pathname: string): boolean {
   return (MARKETING_ROUTES as readonly string[]).includes(pathname);
 }
