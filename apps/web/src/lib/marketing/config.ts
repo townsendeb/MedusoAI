@@ -211,7 +211,7 @@ export const FAQ_ITEMS = [
   {
     question: "How is my data secured?",
     answer:
-      "Data is stored in Supabase with row-level security. Payments are handled by Stripe. SMS is delivered via Twilio. We never sell your customer data.",
+      "Data is stored in Supabase with row-level security. Payments are handled by Stripe. SMS and voice are delivered via AgentPhone. We never sell your customer data.",
   },
 ] as const;
 

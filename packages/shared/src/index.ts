@@ -5,6 +5,8 @@ export * from "./database/types";
 export * from "./dto";
 export * from "./api-keys";
 export * from "./twilio";
+export * from "./agentphone";
+export * from "./telephony";
 export * from "./openai";
 export * from "./alerts";
 export * from "./retell";

@@ -63,9 +63,9 @@ Outreach pauses when limits are hit or billing is past due.
 |---------|------|
 | **Supabase** | Database, login, file storage |
 | **Vercel** | Website hosting |
-| **Twilio** | SMS |
+| **AgentPhone** | SMS and voice |
 | **OpenAI** | AI replies and analysis |
-| **Retell** | AI voice calls |
+| **Retell** | AI voice calls (legacy fallback when `TELEPHONY_PROVIDER=legacy`) |
 | **Stripe** | Subscriptions |
 | **Zapier** | Connect to CRMs and 6,000+ apps |
 | **Inngest** | Background automation |

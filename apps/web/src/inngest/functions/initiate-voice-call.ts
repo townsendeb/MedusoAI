@@ -1,14 +1,14 @@
-import { createPhoneCall } from "@meduso/shared";
+import { placeOutboundCall } from "@meduso/shared";
 import { inngest } from "../client";
 import { checkUsageAllowed, incrementUsage } from "@/lib/billing/usage";
 import { emitConversationEnded } from "@/lib/inngest/events";
 import { isCustomerOptedOut } from "@/lib/outreach/customer";
 import { getServiceClient } from "@/lib/supabase/service";
 
-export const initiateRetellCall = inngest.createFunction(
+export const initiateVoiceCall = inngest.createFunction(
   {
-    id: "initiate-retell-call",
-    name: "Initiate Retell call",
+    id: "initiate-voice-call",
+    name: "Initiate voice call",
     triggers: [{ event: "voice/call.requested" }],
   },
   async ({ event, step }) => {
@@ -20,19 +20,21 @@ export const initiateRetellCall = inngest.createFunction(
     const prepared = await step.run("prepare-voice-conversation", async () => {
       const supabase = getServiceClient();
 
-      const [{ data: customer, error: customerError }, { data: settings }] = await Promise.all([
-        supabase
-          .from("customers")
-          .select("id, name, phone_e164, metadata, deleted_at")
-          .eq("id", customerId)
-          .eq("organization_id", organizationId)
-          .maybeSingle(),
-        supabase
-          .from("outreach_settings")
-          .select("voice_enabled")
-          .eq("organization_id", organizationId)
-          .maybeSingle(),
-      ]);
+      const [{ data: customer, error: customerError }, { data: settings }, { data: organization }] =
+        await Promise.all([
+          supabase
+            .from("customers")
+            .select("id, name, phone_e164, metadata, deleted_at")
+            .eq("id", customerId)
+            .eq("organization_id", organizationId)
+            .maybeSingle(),
+          supabase
+            .from("outreach_settings")
+            .select("voice_enabled")
+            .eq("organization_id", organizationId)
+            .maybeSingle(),
+          supabase.from("organizations").select("name").eq("id", organizationId).single(),
+        ]);
 
       if (customerError) {
         throw customerError;
@@ -89,6 +91,7 @@ export const initiateRetellCall = inngest.createFunction(
         skip: false as const,
         conversationId: conversation.id,
         customerName: customer.name,
+        businessName: organization?.name ?? "our business",
         phoneE164: customer.phone_e164,
       };
     });
@@ -97,33 +100,32 @@ export const initiateRetellCall = inngest.createFunction(
       return { placed: false, reason: prepared.reason };
     }
 
-    const call = await step.run("place-retell-call", async () =>
-      createPhoneCall({
+    const call = await step.run("place-and-link-voice-call", async () => {
+      const placed = await placeOutboundCall({
         toNumber: prepared.phoneE164,
+        businessName: prepared.businessName,
+        customerName: prepared.customerName,
         metadata: {
           conversationId: prepared.conversationId,
           organizationId,
           customerId,
         },
-        dynamicVariables: {
-          name: prepared.customerName,
-        },
-      }),
-    );
+      });
 
-    await step.run("link-call-id", async () => {
       const supabase = getServiceClient();
       const { error } = await supabase
         .from("conversations")
         .update({
-          retell_call_id: call.callId,
-          provider_metadata: { stub: call.stub },
+          provider_call_id: placed.callId,
+          provider_metadata: { stub: placed.stub },
         })
         .eq("id", prepared.conversationId);
 
       if (error) {
         throw error;
       }
+
+      return placed;
     });
 
     await step.run("record-voice-usage", async () => incrementUsage(organizationId, "voice_minutes"));

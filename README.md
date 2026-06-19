@@ -25,4 +25,4 @@ Open [http://localhost:3000](http://localhost:3000). For Inngest and Edge Functi
 
 ## Stack
 
-Next.js · Supabase · Inngest · Twilio · OpenAI · Retell · Stripe · Zapier
+Next.js · Supabase · Inngest · AgentPhone · OpenAI · Stripe · Zapier

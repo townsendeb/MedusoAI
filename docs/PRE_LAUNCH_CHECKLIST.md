@@ -44,6 +44,7 @@
   - [ ] `20250609170000_rate_limits_and_zapier`
   - [ ] `20250609180000_billing_usage`
   - [ ] `20250609190000_billing_review_fixes`
+  - [ ] `20250610120000_agentphone_telephony`
 - [ ] Storage bucket `imports` exists and policies allow uploads
 - [ ] Realtime enabled for `alerts` table
 - [ ] Email auth provider enabled
@@ -74,9 +75,10 @@ Copy every value per [CREDENTIALS.md](./CREDENTIALS.md). Confirm each is set in 
 | `SUPABASE_SERVICE_ROLE_KEY` | ✓ | ✓ | [ ] |
 | `INNGEST_EVENT_KEY` | ✓ | ✓ | [ ] |
 | `INNGEST_SIGNING_KEY` | ✓ | — | [ ] |
-| `TWILIO_ACCOUNT_SID` | ✓ | ✓ | [ ] |
-| `TWILIO_AUTH_TOKEN` | ✓ | ✓ | [ ] |
-| `TWILIO_PHONE_NUMBER` | ✓ | ✓ | [ ] |
+| `TELEPHONY_PROVIDER` | ✓ | — | [ ] |
+| `AGENTPHONE_API_KEY` | ✓ | ✓ | [ ] |
+| `AGENTPHONE_AGENT_ID` | ✓ | ✓ | [ ] |
+| `AGENTPHONE_WEBHOOK_SECRET` | — | ✓ | [ ] |
 | `OPENAI_API_KEY` | ✓ | ✓ | [ ] |
 
 ### Recommended
@@ -84,6 +86,15 @@ Copy every value per [CREDENTIALS.md](./CREDENTIALS.md). Confirm each is set in 
 | Secret | Vercel | Supabase Edge | Done |
 |--------|--------|---------------|------|
 | `NEXT_PUBLIC_SENTRY_DSN` | ✓ | — | [ ] |
+| `AGENTPHONE_NUMBER_ID` | ✓ | ✓ | [ ] |
+
+### Secondary telephony (`TELEPHONY_PROVIDER=legacy` only)
+
+| Secret | Vercel | Supabase Edge | Done |
+|--------|--------|---------------|------|
+| `TWILIO_ACCOUNT_SID` | ✓ | ✓ | [ ] |
+| `TWILIO_AUTH_TOKEN` | ✓ | ✓ | [ ] |
+| `TWILIO_PHONE_NUMBER` | ✓ | ✓ | [ ] |
 | `RETELL_API_KEY` | ✓ | ✓ | [ ] |
 | `RETELL_AGENT_ID` | ✓ | ✓ | [ ] |
 
@@ -110,9 +121,10 @@ Deploy to production Supabase (`supabase functions deploy <name>`):
 | `onboarding` | [ ] | New business signup |
 | `customers` | [ ] | Public API + Zapier create customer |
 | `import` | [ ] | CSV upload |
-| `webhooks-twilio` | [ ] | Inbound SMS |
-| `webhooks-retell` | [ ] | Voice call completion |
+| `webhooks-agentphone` | [ ] | Inbound SMS + voice call completion |
 | `webhooks-stripe` | [ ] | Billing events (if using Stripe) |
+| `webhooks-twilio` | [ ] | Legacy inbound SMS (optional) |
+| `webhooks-retell` | [ ] | Legacy voice completion (optional) |
 | `zapier-alerts` | [ ] | Zapier trigger (optional) |
 | `zapier-conversations` | [ ] | Zapier trigger (optional) |
 | `zapier-hooks` | [ ] | Zapier subscribe (optional) |
@@ -122,13 +134,16 @@ Deploy to production Supabase (`supabase functions deploy <name>`):
 
 ## Phase 4 — External webhooks & partner setup
 
-### Twilio
+### AgentPhone (primary)
 
-- [ ] SMS-capable phone number purchased
+- [ ] AgentPhone account created; API key + agent ID configured
 - [ ] US 10DLC / A2P registration submitted (start early — can take days)
-- [ ] Inbound SMS webhook URL set:
-  - `https://<project-ref>.supabase.co/functions/v1/webhooks-twilio`
-- [ ] Test inbound webhook returns 200 in Twilio debugger
+- [ ] Webhook URL set:
+  - `https://<project-ref>.supabase.co/functions/v1/webhooks-agentphone`
+- [ ] Webhook signing secret saved to Supabase Edge secrets
+- [ ] Test webhook via AgentPhone dashboard (`POST /v1/webhooks/test`)
+
+### Twilio (legacy fallback only)
 
 ### Inngest
 
@@ -141,7 +156,7 @@ Deploy to production Supabase (`supabase functions deploy <name>`):
 - [ ] API key active with billing configured
 - [ ] Usage limits / alerts set in OpenAI dashboard
 
-### Retell (if using voice — Phase 6)
+### Retell (legacy voice fallback only)
 
 - [ ] Voice agent created with post-visit script
 - [ ] Webhook URL set:
@@ -185,7 +200,7 @@ Run these on **production** with a real phone number you control.
 ### Outreach flow
 
 - [ ] New customer triggers outreach in Inngest dashboard (`schedule-outreach` → `send-initial-sms`)
-- [ ] Initial SMS received on test phone (real Twilio, not stub)
+- [ ] Initial SMS received on test phone (real AgentPhone, not stub)
 - [ ] Reply to SMS; AI response received
 - [ ] Conversation appears in Conversations list
 - [ ] Reply **STOP**; customer opted out (no further messages)
@@ -302,8 +317,9 @@ Replace `<project-ref>` and `<domain>` with your values.
 | Service | URL |
 |---------|-----|
 | App | `https://<domain>` |
-| Twilio webhook | `https://<project-ref>.supabase.co/functions/v1/webhooks-twilio` |
-| Retell webhook | `https://<project-ref>.supabase.co/functions/v1/webhooks-retell` |
+| AgentPhone webhook | `https://<project-ref>.supabase.co/functions/v1/webhooks-agentphone` |
+| Twilio webhook (legacy) | `https://<project-ref>.supabase.co/functions/v1/webhooks-twilio` |
+| Retell webhook (legacy) | `https://<project-ref>.supabase.co/functions/v1/webhooks-retell` |
 | Stripe webhook | `https://<project-ref>.supabase.co/functions/v1/webhooks-stripe` |
 | Public API | `https://<project-ref>.supabase.co/functions/v1/customers` |
 | Inngest dashboard | `https://app.inngest.com` |

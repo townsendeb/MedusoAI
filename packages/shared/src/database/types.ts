@@ -126,7 +126,7 @@ export type Conversation = {
   started_at: Timestamp | null;
   ended_at: Timestamp | null;
   twilio_conversation_sid: string | null;
-  retell_call_id: string | null;
+  provider_call_id: string | null;
   recording_url: string | null;
   transcript_raw: string | null;
   recovery_status: RecoveryStatus;

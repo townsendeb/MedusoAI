@@ -1,4 +1,4 @@
-import { DEFAULT_MAX_SMS_TURNS, renderSmsTemplate, sendSms } from "@meduso/shared";
+import { DEFAULT_MAX_SMS_TURNS, renderSmsTemplate, sendOutboundSms } from "@meduso/shared";
 import { inngest } from "../client";
 import { checkUsageAllowed, incrementUsage } from "@/lib/billing/usage";
 import { isCustomerOptedOut } from "@/lib/outreach/customer";
@@ -115,7 +115,9 @@ export const sendInitialSms = inngest.createFunction(
       return { sent: false, reason: usage.reason ?? "usage_limit_exceeded", usage };
     }
 
-    const sms = await step.run("send-sms", async () => sendSms({ to: prepared.to, body: prepared.body }));
+    const sms = await step.run("send-sms", async () =>
+      sendOutboundSms({ to: prepared.to, body: prepared.body }),
+    );
 
     const message = await step.run("persist-message", async () => {
       const supabase = getServiceClient();
@@ -127,7 +129,7 @@ export const sendInitialSms = inngest.createFunction(
           role: "ASSISTANT",
           content: prepared.body,
           channel: "SMS",
-          provider_message_id: sms.sid,
+          provider_message_id: sms.providerMessageId,
         })
         .select("id")
         .single();
@@ -141,7 +143,7 @@ export const sendInitialSms = inngest.createFunction(
         .update({
           provider_metadata: {
             lastAssistantMessageId: data.id,
-            lastSmsSid: sms.sid,
+            lastSmsProviderMessageId: sms.providerMessageId,
             stub: sms.stub,
           },
         })

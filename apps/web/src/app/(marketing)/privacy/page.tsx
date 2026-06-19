@@ -30,8 +30,8 @@ export default function PrivacyPage() {
 
       <h2 className="text-xl font-semibold text-[var(--marketing-foreground)]">Service providers</h2>
       <p>
-        We use trusted subprocessors including Supabase (database and authentication), Twilio (SMS
-        and voice), OpenAI (AI processing), Stripe (payments), Vercel (hosting), and Inngest
+        We use trusted subprocessors including Supabase (database and authentication), AgentPhone
+        (SMS and voice), OpenAI (AI processing), Stripe (payments), Vercel (hosting), and Inngest
         (background jobs). These providers process data on our behalf under contractual obligations.
       </p>
 

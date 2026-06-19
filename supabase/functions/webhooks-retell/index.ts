@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
     const { data: conversation, error: conversationError } = await supabase
       .from("conversations")
       .select("id, organization_id, status, customer_id")
-      .eq("retell_call_id", callId)
+      .eq("provider_call_id", callId)
       .maybeSingle();
 
     if (conversationError) {

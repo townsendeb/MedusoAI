@@ -217,7 +217,7 @@ These run automatically without anyone clicking a button:
 | `parse-customer-import` | Reads an uploaded CSV row by row and creates customers |
 | `analyze-conversation` | Reads a finished conversation and scores sentiment + categories |
 | `create-alerts` | Turns analysis results into actionable alerts on your dashboard |
-| `initiate-retell-call` | Places an AI voice call to a specific customer |
+| `initiate-voice-call` | Places an AI voice call to a specific customer (AgentPhone or Retell via `TELEPHONY_PROVIDER`) |
 | `zapier-dispatch` | Tells Zapier when an alert is created or a conversation ends |
 
 ---

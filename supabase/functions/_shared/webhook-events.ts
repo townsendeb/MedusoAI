@@ -14,7 +14,7 @@ function getServiceClient() {
 }
 
 export async function claimWebhookEvent(
-  provider: "TWILIO" | "RETELL" | "STRIPE",
+  provider: "TWILIO" | "RETELL" | "STRIPE" | "AGENTPHONE",
   externalEventId: string,
   payload: Record<string, unknown>,
 ): Promise<WebhookClaimResult> {
@@ -68,7 +68,7 @@ export async function completeWebhookEvent(externalEventId: string): Promise<voi
 
 /** @deprecated Use claimWebhookEvent + completeWebhookEvent */
 export async function recordWebhookEventIfNew(
-  provider: "TWILIO" | "RETELL" | "STRIPE",
+  provider: "TWILIO" | "RETELL" | "STRIPE" | "AGENTPHONE",
   externalEventId: string,
   payload: Record<string, unknown>,
 ): Promise<boolean> {

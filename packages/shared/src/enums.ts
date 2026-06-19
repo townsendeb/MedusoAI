@@ -69,7 +69,7 @@ export const RECOVERY_ACTION_TYPES = [
 ] as const;
 export type RecoveryActionType = (typeof RECOVERY_ACTION_TYPES)[number];
 
-export const WEBHOOK_PROVIDERS = ["TWILIO", "RETELL", "STRIPE"] as const;
+export const WEBHOOK_PROVIDERS = ["TWILIO", "RETELL", "STRIPE", "AGENTPHONE"] as const;
 export type WebhookProvider = (typeof WEBHOOK_PROVIDERS)[number];
 
 export const API_KEY_SCOPES = ["customers:read", "customers:write"] as const;

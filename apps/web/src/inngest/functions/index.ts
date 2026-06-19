@@ -1,5 +1,5 @@
 import { analyzeConversationJob } from "./analyze-conversation";
-import { initiateRetellCall } from "./initiate-retell-call";
+import { initiateVoiceCall } from "./initiate-voice-call";
 import { checkConversationTimeout } from "./check-conversation-timeout";
 import { createAlerts } from "./create-alerts";
 import { endConversationOnMaxTurns } from "./end-conversation-on-max-turns";
@@ -18,6 +18,6 @@ export const inngestFunctions = [
   endConversationOnMaxTurns,
   analyzeConversationJob,
   createAlerts,
-  initiateRetellCall,
+  initiateVoiceCall,
   zapierDispatch,
 ];

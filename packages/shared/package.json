@@ -9,7 +9,7 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "node -e \"process.exit(0)\"",
-    "test": "npm run build && node --test dist/billing/plans.test.js"
+    "test": "npm run build && node --test dist/billing/plans.test.js dist/telephony/provider.test.js dist/agentphone/validate-webhook.test.js"
   },
   "dependencies": {
     "zod": "^3.25.76"

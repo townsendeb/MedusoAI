@@ -18,12 +18,12 @@ Track every credential needed to run Meduso locally and in production. Copy valu
 | Supabase service role   | Same (**server only**)                                              | `SUPABASE_SERVICE_ROLE_KEY`     | Yes    | `SUPABASE_SERVICE_ROLE_KEY` |
 | Inngest event key       | [Inngest](https://www.inngest.com/) → Manage → Keys                 | `INNGEST_EVENT_KEY`             | Yes    | `INNGEST_EVENT_KEY`         |
 | Inngest signing key     | Inngest → Signing key                                               | `INNGEST_SIGNING_KEY`           | Yes    | —                           |
-| Twilio Account SID      | [Twilio Console](https://console.twilio.com/)                       | `TWILIO_ACCOUNT_SID`            | Yes    | `TWILIO_ACCOUNT_SID`        |
-| Twilio Auth Token       | Twilio Console                                                      | `TWILIO_AUTH_TOKEN`             | Yes    | `TWILIO_AUTH_TOKEN`         |
-| Twilio phone number     | Twilio → Phone Numbers (E.164)                                      | `TWILIO_PHONE_NUMBER`           | Yes    | `TWILIO_PHONE_NUMBER`       |
+| Telephony provider      | `agentphone` (default) or `legacy` for Twilio/Retell                | `TELEPHONY_PROVIDER`            | Yes    | —                           |
+| AgentPhone API key      | [AgentPhone Dashboard](https://agentphone.ai/dashboard)             | `AGENTPHONE_API_KEY`              | Yes    | `AGENTPHONE_API_KEY`        |
+| AgentPhone agent ID     | AgentPhone → Agents                                                 | `AGENTPHONE_AGENT_ID`             | Yes    | `AGENTPHONE_AGENT_ID`       |
+| AgentPhone number ID    | AgentPhone → Numbers (optional)                                     | `AGENTPHONE_NUMBER_ID`            | Yes    | `AGENTPHONE_NUMBER_ID`      |
+| AgentPhone webhook secret | AgentPhone → Webhooks → signing secret                            | `AGENTPHONE_WEBHOOK_SECRET`       | —      | `AGENTPHONE_WEBHOOK_SECRET` |
 | OpenAI API key          | [OpenAI Platform](https://platform.openai.com/api-keys)             | `OPENAI_API_KEY`                | Yes    | `OPENAI_API_KEY`            |
-| Retell API key          | [Retell Dashboard](https://dashboard.retellai.com/)                 | `RETELL_API_KEY`                | Yes    | `RETELL_API_KEY`            |
-| Retell agent ID         | Retell → Agents                                                     | `RETELL_AGENT_ID`               | Yes    | `RETELL_AGENT_ID`           |
 | Sentry DSN              | [Sentry](https://sentry.io/) → Project Settings                     | `NEXT_PUBLIC_SENTRY_DSN`        | Yes    | —                           |
 | Stripe secret key       | [Stripe Dashboard](https://dashboard.stripe.com/apikeys)            | `STRIPE_SECRET_KEY`             | Yes    | `STRIPE_SECRET_KEY`         |
 | Stripe webhook secret   | Stripe → Webhooks → signing secret                                  | `STRIPE_WEBHOOK_SECRET`         | —      | `STRIPE_WEBHOOK_SECRET`     |
@@ -37,41 +37,39 @@ Track every credential needed to run Meduso locally and in production. Copy valu
 
 - [x] Create project (staging + production recommended)
 - [x] Run migrations: `supabase db push` or `supabase db reset` locally
-- [ ] Enable **Google** auth provider (Authentication → Providers) when using OAuth
-- [ ] Add redirect URLs (Authentication → URL Configuration):
+- [x] Enable **Google** auth provider (Authentication → Providers) when using OAuth
+- [x] Add redirect URLs (Authentication → URL Configuration):
   - `http://localhost:3000/auth/callback`
   - `https://<your-domain>/auth/callback`
-- [ ] Enable **Realtime** replication for `alerts` (included in migrations)
-- [x] Deploy Edge Functions: `customers`, `import`, `onboarding`, `webhooks-twilio`, `webhooks-retell`, `webhooks-stripe`
+- [x] Enable **Realtime** replication for `alerts` (included in migrations)
+- [ ] Deploy Edge Functions: `customers`, `import`, `onboarding`, `webhooks-agentphone`, `webhooks-stripe` (+ `webhooks-twilio`, `webhooks-retell` for legacy fallback)
 
 ```bash
 # Edge Function secrets (repeat per deployed project)
 supabase secrets set \
   INNGEST_EVENT_KEY=... \
-  TWILIO_ACCOUNT_SID=... \
-  TWILIO_AUTH_TOKEN=... \
-  TWILIO_PHONE_NUMBER=... \
-  OPENAI_API_KEY=... \
-  RETELL_API_KEY=... \
-  RETELL_AGENT_ID=...
+  AGENTPHONE_API_KEY=... \
+  AGENTPHONE_AGENT_ID=... \
+  AGENTPHONE_WEBHOOK_SECRET=... \
+  OPENAI_API_KEY=...
 ```
 
 ---
 
 ## 2. Google OAuth (optional — email auth works without it)
 
-- [ ] [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → OAuth 2.0 Client ID
-- [ ] Authorized redirect URI: `https://<project-ref>.supabase.co/auth/v1/callback`
-- [ ] Paste **Client ID** + **Client Secret** into Supabase → Authentication → Google
+- [x] [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → OAuth 2.0 Client ID
+- [x] Authorized redirect URI: `https://<project-ref>.supabase.co/auth/v1/callback`
+- [x] Paste **Client ID** + **Client Secret** into Supabase → Authentication → Google
 
 ---
 
 ## 3. Vercel (Next.js + Inngest)
 
-- [ ] Import repo, set root to monorepo / `apps/web` per your setup
+- [x] Import repo, set root to monorepo / `apps/web` per your setup
 - [ ] Add all env vars from the table above
-- [ ] Install [Inngest Vercel integration](https://www.inngest.com/docs/deploy/vercel) (syncs signing key + registers `/api/inngest`)
-- [ ] Set production `NEXT_PUBLIC_SUPABASE_URL` to production Supabase project
+- [x] Install [Inngest Vercel integration](https://www.inngest.com/docs/deploy/vercel) (syncs signing key + registers `/api/inngest`)
+- [x] Set production `NEXT_PUBLIC_SUPABASE_URL` to production Supabase project
 
 ---
 
@@ -84,14 +82,18 @@ supabase secrets set \
 
 ---
 
-## 5. Twilio (SMS — Sprint 2)
+## 5. AgentPhone (SMS + voice — primary)
 
-- [ ] Create Twilio account
-- [ ] Buy a phone number (SMS-capable)
-- [ ] **10DLC registration** for US outbound (start early — can take days)
-- [ ] Configure inbound SMS webhook:
-  - `https://<project-ref>.supabase.co/functions/v1/webhooks-twilio`
-- [ ] Leave vars unset locally to use **stub mode** (no real SMS)
+- [ ] Create [AgentPhone](https://agentphone.ai) account
+- [ ] Copy **API key** → `AGENTPHONE_API_KEY`
+- [ ] Copy **Agent ID** → `AGENTPHONE_AGENT_ID`
+- [ ] Optional: **Number ID** → `AGENTPHONE_NUMBER_ID` (if agent has multiple numbers)
+- [ ] **10DLC / A2P registration** for US outbound SMS (start early — can take days)
+- [ ] Configure webhook URL:
+  - `https://<project-ref>.supabase.co/functions/v1/webhooks-agentphone`
+- [ ] Save webhook **signing secret** → `AGENTPHONE_WEBHOOK_SECRET` (Supabase Edge secrets)
+- [ ] Set `TELEPHONY_PROVIDER=agentphone` on Vercel (default if omitted)
+- [ ] Leave vars unset locally to use **stub mode** (no real SMS or calls)
 
 ---
 
@@ -103,18 +105,21 @@ supabase secrets set \
 
 ---
 
-## 7. Retell AI (Voice — Sprint 4)
+## 7. Secondary telephony (Twilio + Retell — fallback only)
 
-- [ ] Create Retell account
-- [ ] Create a **voice agent** (post-visit feedback script)
-- [ ] Copy **Agent ID** → `RETELL_AGENT_ID`
-- [ ] Copy **API key** (with webhook badge) → `RETELL_API_KEY`
-- [ ] Set agent or account webhook URL:
-  - `https://<project-ref>.supabase.co/functions/v1/webhooks-retell`
-- [ ] Enable webhook events: `call_started`, `call_ended` (minimum)
-- [ ] Link Retell to your Twilio number for outbound calls
-- [ ] Allowlist Retell IP if needed: `100.20.5.228`
-- [ ] Leave unset locally to use **stub mode** (simulated call IDs)
+Use when `TELEPHONY_PROVIDER=legacy`.
+
+### Twilio (SMS)
+
+- [ ] `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`
+- [ ] Inbound webhook: `https://<project-ref>.supabase.co/functions/v1/webhooks-twilio`
+
+### Retell (voice)
+
+- [ ] `RETELL_API_KEY`, `RETELL_AGENT_ID`
+- [ ] Webhook: `https://<project-ref>.supabase.co/functions/v1/webhooks-retell`
+- [ ] Events: `call_ended` (minimum)
+- [ ] `TWILIO_PHONE_NUMBER` as Retell `from_number` when placing calls
 
 ---
 
@@ -130,11 +135,19 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...
 INNGEST_EVENT_KEY=
 INNGEST_SIGNING_KEY=
 
-# Optional — stub mode when omitted
+TELEPHONY_PROVIDER=agentphone
+
+# Primary — stub mode when omitted
+# AGENTPHONE_API_KEY=
+# AGENTPHONE_AGENT_ID=
+# AGENTPHONE_NUMBER_ID=
+# AGENTPHONE_WEBHOOK_SECRET=
+# OPENAI_API_KEY=
+
+# Secondary (TELEPHONY_PROVIDER=legacy)
 # TWILIO_ACCOUNT_SID=
 # TWILIO_AUTH_TOKEN=
 # TWILIO_PHONE_NUMBER=
-# OPENAI_API_KEY=
 # RETELL_API_KEY=
 # RETELL_AGENT_ID=
 
@@ -150,9 +163,10 @@ INNGEST_SIGNING_KEY=
 
 | Integration | Without credentials             | With credentials                      |
 | ----------- | ------------------------------- | ------------------------------------- |
-| Twilio      | Logs SMS, fake message SID      | Real send/receive                     |
+| AgentPhone  | Logs SMS/calls, fake IDs        | Real send/receive SMS + voice         |
+| Twilio      | Logs SMS, fake message SID      | Real send/receive (legacy mode)       |
 | OpenAI      | Canned SMS + heuristic analysis | Live AI replies + structured analysis |
-| Retell      | Fake call ID, no dial           | Real outbound voice calls             |
+| Retell      | Fake call ID, no dial           | Real outbound voice (legacy mode)     |
 | Inngest     | Required for background jobs    | Same                                  |
 
 
@@ -195,5 +209,5 @@ supabase secrets set \
 - [ ] `supabase functions serve --env-file apps/web/.env.local` — Edge Functions respond
 - [ ] Create customer → conversation scheduled (Inngest dashboard)
 - [ ] CSV import completes (Storage + import function)
-- [ ] Twilio webhook receives inbound SMS (production)
-- [ ] Retell webhook receives `call_ended` (production)
+- [ ] AgentPhone webhook receives inbound SMS (production)
+- [ ] AgentPhone webhook receives `agent.call_ended` (production voice)

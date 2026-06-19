@@ -172,7 +172,9 @@ See [`integrations/zapier/README.md`](../integrations/zapier/README.md) for publ
 
 New customers trigger `customer/created` → delayed outreach → initial SMS conversation.
 
-**Stub mode:** Without Twilio/OpenAI env vars, messages are logged and canned replies are used — full flow still runs in Inngest.
+**Provider:** AgentPhone by default (`TELEPHONY_PROVIDER=agentphone`). Set `TELEPHONY_PROVIDER=legacy` for Twilio.
+
+**Stub mode:** Without AgentPhone/OpenAI env vars, messages are logged and canned replies are used — full flow still runs in Inngest.
 
 **Local testing:**
 
@@ -186,7 +188,7 @@ npm run dev:inngest
 supabase functions serve --env-file apps/web/.env.local
 ```
 
-Twilio inbound webhook URL: `https://<project-ref>.supabase.co/functions/v1/webhooks-twilio`
+AgentPhone webhook URL: `https://<project-ref>.supabase.co/functions/v1/webhooks-agentphone`
 
 ### Analysis + alerts (Slice 3.x)
 
@@ -200,9 +202,11 @@ Apply migration: `supabase db push` (adds `get_analytics_overview()` RPC).
 
 Trigger a voice call from the customer detail page or `POST /api/outreach/voice/:customerId`.
 
-Retell webhook URL: `https://<project-ref>.supabase.co/functions/v1/webhooks-retell`
+AgentPhone webhook URL: `https://<project-ref>.supabase.co/functions/v1/webhooks-agentphone` (handles `agent.call_ended`)
 
-Without Retell credentials, stub mode simulates a 5-second call and runs analysis.
+Legacy Retell webhook: `https://<project-ref>.supabase.co/functions/v1/webhooks-retell` (when `TELEPHONY_PROVIDER=legacy`)
+
+Without AgentPhone credentials, stub mode simulates a 5-second call and runs analysis.
 
 ### Public API (Slice 1.4)
 
